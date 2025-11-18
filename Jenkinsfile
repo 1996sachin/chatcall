@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/1996sachin/chatcall.git'
@@ -14,21 +15,18 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Docker Build') {
             steps {
-                sh 'npm test || true'   // remove || true if you have real tests
+                sh 'docker build -t chatcall-app .'
             }
         }
 
-        stage('Build') {
+        stage('Deploy with Docker Compose') {
             steps {
-                sh 'npm run build'
-            }
-        }
-
-        stage('Start App') {
-            steps {
-                sh 'npm start &'
+                sh '''
+                docker-compose down
+                docker-compose up -d --build
+                '''
             }
         }
     }
