@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: chatcall_app
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+
+      # MongoDB connection inside Docker network
+      - MONGO_URI=mongodb://mongo:27017/chatcall
+
+      # Add your credentials
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - SESSION_SECRET=${SESSION_SECRET}
+
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app   # optional for development
+
+  mongo:
+    image: mongo:6
+    container_name: chatcall_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=chatcall
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
