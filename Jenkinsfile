@@ -1,6 +1,14 @@
 pipeline {
     agent any
 
+    environment {
+        # MongoDB connection string
+        MONGO_URI      = 'mongodb://mongo:27017/chatcall'
+        SESSION_SECRET = 'your_random_session_secret'   
+        IMAGE_NAME     = "chatcall-app"
+        IMAGE_TAG      = "latest"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -15,9 +23,11 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Docker Build (Multi-Stage)') {
             steps {
-                sh 'docker build -t chatcall-app .'
+                sh """
+                docker build --build-arg NODE_ENV=production -t $IMAGE_NAME:$IMAGE_TAG .
+                """
             }
         }
 
@@ -28,6 +38,15 @@ pipeline {
                 docker compose up -d --build
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Deployment successful!"
+        }
+        failure {
+            echo "❌ Deployment failed!"
         }
     }
 }
