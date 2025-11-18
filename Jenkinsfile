@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        # MongoDB connection string
+        // MongoDB connection string
         MONGO_URI      = 'mongodb://mongo:27017/chatcall'
-        SESSION_SECRET = 'your_random_session_secret'   
+        // Session secret for your app
+        SESSION_SECRET = 'your_random_session_secret'
         IMAGE_NAME     = "chatcall-app"
         IMAGE_TAG      = "latest"
     }
