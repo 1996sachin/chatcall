@@ -5,11 +5,11 @@ services:
     build: .
     container_name: chatcall_app
     ports:
-      - "3000:3000"
+      - "9005:9005"
     restart: always
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=9005
 
       # MongoDB connection inside Docker network
       - MONGO_URI=mongodb://mongo:27017/chatcall
