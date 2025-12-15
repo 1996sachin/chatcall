@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatcall
+  labels:
+    app: chatcall
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: chatcall
+  template:
+    metadata:
+      labels:
+        app: chatcall
+    spec:
+      containers:
+      - name: chatcall
+        image: chatcall:v1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          name: http
+        env:
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: chatcall-config
+              key: NODE_ENV
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: chatcall-config
+              key: PORT
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: chatcall-config
+              key: LOG_LEVEL
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: chatcall-secret
+              key: MONGO_URI
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: chatcall-secret
+              key: JWT_SECRET
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: chatcall-secret
+              key: API_KEY
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
